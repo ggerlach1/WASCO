@@ -127,8 +127,13 @@ def comparison_tool(ensemble_1_path, ensemble_1_name, ensemble_2_path, ensemble_
                 print("Converting files to .xtc + topology .pdb...\n ")
                 if not os.path.exists("/".join([var_dict["_".join(['ensemble',which_ens,'path'])],'converted_files'])):
                     os.mkdir("/".join([var_dict["_".join(['ensemble',which_ens,'path'])],'converted_files']))
+
                 for file_j in var_dict["_".join(['pdb_files',which_ens])]:
-                    multiframe_pdb_to_xtc(pdb_file = "/".join([var_dict["_".join(['ensemble',which_ens,'path'])],file_j]), save_path = "/".join([var_dict["_".join(['ensemble',which_ens,'path'])],'converted_files']), prot_name = file_j.split('.pdb')[0])
+                    if not os.path.exists("/".join([var_dict["_".join(['ensemble',which_ens,'path'])],'converted_files',file_j.split('.pdb')[0]+'.xtc')):
+                        print('Converted file does not exist, converting')
+                        multiframe_pdb_to_xtc(pdb_file = "/".join([var_dict["_".join(['ensemble',which_ens,'path'])],file_j]), save_path = "/".join([var_dict["_".join(['ensemble',which_ens,'path'])],'converted_files']), prot_name = file_j.split('.pdb')[0])
+                    else:
+                        print('Converted file exists, skipping')
                     print("".join(['Done for ',file_j]))
                 var_dict["_".join(['do_xtc',which_ens])] = True
                 var_dict["_".join(['xtc_root_path',which_ens])] = "/".join([var_dict["_".join(['ensemble',which_ens,'path'])],'converted_files'])

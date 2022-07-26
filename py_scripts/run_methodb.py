@@ -16,9 +16,24 @@ import time
 import sys
 import shutil
 import warnings # Optional
+import argparse 
+
+parser = argparse.ArgumentParser(description='Run this method')
+parser.add_argument('--path', help='path to SCRATCH')
+parser.add_argument('--n1', help='Name ensamble 1')
+parser.add_argument('--n2', help='Name ensamble 2')
+args=parser.parse_args()
 
 
-# In[8]:
+path_ensemble_1 = args.path+'/ensemble_1'
+path_ensemble_2 = args.path+'/ensemble_2'
+name_1 = args.n1
+name_2 = args.n2
+# results = args.path+'/results_script'
+
+Nrep_1 = 1 # If 1, no replicas will be sampled. If multiple replicas are provided by the user, forced to 1.
+Nrep_2 = 1
+ncores = 4 # Number of threads (cores). If 'max', set to the maximum number of available threads.
 
 
 def comparison_tool(ensemble_1_path, ensemble_1_name, ensemble_2_path, ensemble_2_name, results_path = None, interactive = True, N_replicas_1 = 1, N_replicas_2 = 1, N_cores = 1):
@@ -365,22 +380,11 @@ def comparison_tool(ensemble_1_path, ensemble_1_name, ensemble_2_path, ensemble_
 # In[9]:
 
 
-p='/Users/gabygerlach/Library/CloudStorage/OneDrive-UniversityofPittsburgh/camacho/PSD95/WCOMP/WASCO/Examples/1FMK_peptides'
-path_ensemble_1 = p+'/ensemble_1'
-path_ensemble_2 = p+'/ensemble_2'
-name_1 = 'test1'
-name_2 = 'test2'
-results = p+'/results_script'
-
-Nrep_1 = 1 # If 1, no replicas will be sampled. If multiple replicas are provided by the user, forced to 1.
-Nrep_2 = 1
-ncores = 4 # Number of threads (cores). If 'max', set to the maximum number of available threads.
-
 comparison_tool(ensemble_1_path = path_ensemble_1,
                 ensemble_1_name = name_1, 
                 ensemble_2_path = path_ensemble_2,
                 ensemble_2_name = name_2, 
-                results_path = results,
+                results_path = None,
                 interactive = False,
                 N_replicas_1 = Nrep_1,
                 N_replicas_2 = Nrep_2,

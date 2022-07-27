@@ -30,14 +30,16 @@ results = args.results
 
 Nrep_1 = 1 # If 1, no replicas will be sampled. If multiple replicas are provided by the user, forced to 1.
 Nrep_2 = 1
-ncores = 4 # Number of threads (cores). If 'max', set to the maximum number of available threads.
+ncores = 'max' # Number of threads (cores). If 'max', set to the maximum number of available threads.
 
 
 def comparison_tool(ensemble_1_name, ensemble_2_name, results_path = None, interactive = True, N_replicas_1 = 1, N_replicas_2 = 1, N_cores = 1):
-
-    path_to_running = os.path.dirname(__file__)
-    ensemble_1_path = os.path.join(os.path.dirname(__file__),'ensemble_1')
-    ensemble_2_path = os.path.join(os.path.dirname(__file__),'ensemble_2')
+    path_to_running = os.path.dirname(os.path.abspath(__file__))
+    print(path_to_running)
+    ensemble_1_path = os.path.join(path_to_running,'ensemble_1')
+    ensemble_2_path = os.path.join(path_to_running,'ensemble_2')
+    print(ensemble_1_path)
+    print(ensemble_2_path)
     if results_path == ensemble_1_path or results_path == ensemble_2_path:
         sys.exit("Please choose results_path different from ensemble_1_path and ensemble_2_path.")
     if ensemble_1_path == ensemble_2_path:
@@ -50,11 +52,12 @@ def comparison_tool(ensemble_1_name, ensemble_2_name, results_path = None, inter
             results_path = "/".join([os.path.abspath(os.path.join(ensemble_1_path, os.pardir)),"_".join(['results',ensemble_1_name,ensemble_2_name])])
         else:
             sys.exit("".join(['The folder ', "/".join([os.path.abspath(os.path.join(ensemble_1_path, os.pardir)),"_".join(['results',ensemble_1_name,ensemble_2_name])]),' already exists and it is not empty. Please empty or delete it.']))
-    if results_path is not None and not os.path.exists(os.path.join(os.path.dirname(__file__),results_path)):
-        os.mkdir(os.path.join(os.path.dirname(__file__),results_path))
-    if results_path is not None and os.path.exists(os.path.join(os.path.dirname(__file__),results_path)):
+    if results_path is not None and not os.path.exists(os.path.join(path_to_running,results_path)):
+        results_path = os.path.join(path_to_running,results_path)
+        os.mkdir(os.path.join(path_to_running,results_path))
+    if results_path is not None and os.path.exists(os.path.join(path_to_running,results_path)):
         if len(os. listdir(results_path))==0:
-            None
+            results_path = os.path.join(path_to_running,results_path)
         else:
             sys.exit("".join(['The folder ', results_path,' already exists and it is not empty. Please empty or delete it.']))
         
@@ -390,9 +393,7 @@ def comparison_tool(ensemble_1_name, ensemble_2_name, results_path = None, inter
 
 
 
-comparison_tool(ensemble_1_path = path_ensemble_1,
-                ensemble_1_name = name_1, 
-                ensemble_2_path = path_ensemble_2,
+comparison_tool(ensemble_1_name = name_1, 
                 ensemble_2_name = name_2, 
                 results_path = results,
                 interactive = False,

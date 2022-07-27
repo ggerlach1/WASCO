@@ -28,9 +28,9 @@ cd ${SCRATCH_DIR}
 
 # copy files to working directory
 
-$NAME1 = '1-3' 
-$NAME2 = '2-4'
-$RESULTS = 'slurm1' 
+NAME1='1-3' 
+NAME2='2-4'
+RESULTS='slurm1' 
 
 mkdir ensemble_1
 mkdir ensemble_2
@@ -46,13 +46,14 @@ trap clean_up EXIT
 #define clean_up
 clean_up(){
     echo 'copying files'
-    rsync -av ${SCRATCH_DIR}/${RESULTS}/* ${SLURM_SUBMIT_DIR}
+    rsync -av ${SCRATCH_DIR}/${RESULTS} ${SLURM_SUBMIT_DIR}
 
 }
 #-----Running Jobs --------
 
 module load anaconda/3-cluster
-source activate IDP-wcomp # this environment must exist already
+source activate IDP-wcomp
+conda list mdtraj
 
 python run_method.py --n1 $NAME1 --n2 $NAME2 --results $RESULTS
 

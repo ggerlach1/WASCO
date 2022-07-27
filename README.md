@@ -34,5 +34,4 @@ installed all of the following libraries: [numpy](https://numpy.org/),
 The file `environment.yml` can be used to create a conda environment with the above packages:
 ```conda env create --file=environment.yml```
 
-The environment does not have ipynb or jupyter (to run the notebooks, you will still need to install those)
 

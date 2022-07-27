@@ -9,9 +9,18 @@ Results are returned through a distance matrix, depicting both scales' results: 
 * If no independent replicas are provided/sampled (and thus, uncertainty is ignored): the intra-ensemble distances between each pair of distributions.
 * If independent replicas are provided/sampled (and thus, uncertainty is considered): the proportion of intra-ensemble distances that is added to the intra-ensemble distances to reach the encountered inter-ensemble distances. In the legend, $\Delta W$ corresponds to the difference between the inter-ensemble and the intra-ensemble distances, and $W_{\mathrm{ind}}$ indicates the intra-ensemble differences. In other words, this scale represents **how different are the inter-ensemble distances with respect to the intra-ensemble ones** (e.g. the "net" distance that has been added to uncertainty represents the 150% of such uncertainty). This was set as the easiest interpretable scale, using uncertainty as a reference to which compare the inter-ensemble differences.
 
-The entry (i,j) of the matrix coresponds to the distance between the distributions of the relative positions i-j (one distribution per ensemble). It measures how different is the relative position of residue i with respect to j when changing from one ensemble to the other. The entry (i,i) corresponds to the distance between the distributions of the i-th residue's (phi, psi) angles (one distribution per ensemble). It measures how different is the (phi, psi) distribution of i-th amino-acid when changing from one ensemble to the other.
+The entry (i,j) of the matrix coresponds to the distance between the
+distributions of the relative positions i-j (one distribution per ensemble). It
+measures how different is the relative position of residue i with respect to j
+when changing from one ensemble to the other. The entry (i,i) corresponds to
+the distance between the distributions of the i-th residue's (phi, psi) angles
+(one distribution per ensemble). It measures how different is the (phi, psi)
+distribution of i-th amino-acid when changing from one ensemble to the other.
 
-To apply the comparison tool for a given pair of IDP ensembles, the user can directly execute the [comparison_tool](https://github.com/gonzalez-delgado/WASCO/blob/master/comparison_tool.ipynb) file, which contains its specific instructions and guidelines. This file calls all the other notebooks included in the same folder, which can also be used individually if desired. 
+To apply the function to a set of simulations you can use the .ipynb files,
+specifically `comparison_tool.ipynb` OR you can submit a job to a cluster
+utilizing the .py script version of the code and the script `run_method.py` if
+you use SLURM as your workload manager there is a script to submit a job. 
 
 Before running the function, be sure to set Python version to 3.8 and to have
 installed all of the following libraries: [numpy](https://numpy.org/),

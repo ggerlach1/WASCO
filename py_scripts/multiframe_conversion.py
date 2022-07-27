@@ -19,7 +19,6 @@ import os
 # * `save_file`: path where the returned files must be saved.
 # * `prot_name`: a string naming the files as prot_name.xtc, prot_name.pdb.
 
-# In[ ]:
 
 
 def multiframe_pdb_to_xtc(pdb_file, save_path, prot_name):
@@ -37,7 +36,6 @@ def multiframe_pdb_to_xtc(pdb_file, save_path, prot_name):
 
 # ## Executing the function
 
-# In[ ]:
 
 
 '''

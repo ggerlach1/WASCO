@@ -180,7 +180,8 @@ def w_matrix(prot_1, prot_2, N_centers, N_cores, data_path, name_variable = '__m
     print("".join(['Protein 1 : ', prot_1,'\n']))
     print("".join(['Protein 2 : ', prot_2,'\n']))
     print('-------------------------------------------------------------------\n')   
-    
+   
+    print(__name__)
     if __name__ == name_variable: # Parallel computing
         pairwise_distances = Parallel(n_jobs = N_cores, verbose=10, backend = 'threading')(delayed(it_function)(i) for i in it_pairs)
     

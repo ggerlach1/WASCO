@@ -1,17 +1,22 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[5]:
+
+
 from build_frames import *
 from sample_independent_replicas import *
 from multiframe_conversion import *
 from wmatrix import *
 from wvector import *
 from graphical_representation import *
-# from comparison_tool import *
 
 import os
 import time
 import sys
 import shutil
-import warnings # Optiona
-import argparse
+import warnings # Optional
+import argparse 
 
 parser = argparse.ArgumentParser(description='Run this method')
 parser.add_argument('--path', help='path to SCRATCH')
@@ -19,16 +24,17 @@ parser.add_argument('--n1', help='Name ensamble 1')
 parser.add_argument('--n2', help='Name ensamble 2')
 args=parser.parse_args()
 
+
 path_ensemble_1 = args.path+'/ensemble_1'
 path_ensemble_2 = args.path+'/ensemble_2'
 name_1 = args.n1
 name_2 = args.n2
-results_path = args.path+'/results'
+results = args.path+'/results_script'
 
 Nrep_1 = 1 # If 1, no replicas will be sampled. If multiple replicas are provided by the user, forced to 1.
 Nrep_2 = 1
-# ncores = 'max' # Number of threads (cores). If 'max', set to the maximum number of available threads.
-ncores = 1
+ncores = 4 # Number of threads (cores). If 'max', set to the maximum number of available threads.
+
 
 def comparison_tool(ensemble_1_path, ensemble_1_name, ensemble_2_path, ensemble_2_name, results_path = None, interactive = True, N_replicas_1 = 1, N_replicas_2 = 1, N_cores = 1):
      
@@ -44,7 +50,13 @@ def comparison_tool(ensemble_1_path, ensemble_1_name, ensemble_2_path, ensemble_
             results_path = "/".join([os.path.abspath(os.path.join(ensemble_1_path, os.pardir)),"_".join(['results',ensemble_1_name,ensemble_2_name])])
         else:
             sys.exit("".join(['The folder ', "/".join([os.path.abspath(os.path.join(ensemble_1_path, os.pardir)),"_".join(['results',ensemble_1_name,ensemble_2_name])]),' already exists and it is not empty. Please empty or delete it.']))
-        
+    if results_path is not None and not os.path.exists(results_path):
+        os.mkdir(results_path)
+    if results_path is not None and os.path.exists(results_path):
+        if len(os. listdir(results_path))==0:
+            None
+        else:
+            sys.exit("".join(['The folder ', results_path,' already exists and it is not empty. Please empty or delete it.']))
         
     # Initial parameters
     var_dict = {'multiframe' : 'n', 'check_folder' : True, 'do_xtc_1' : False, 'N_rep_1' : int(N_replicas_1), 'ignore_uncertainty_1' : False, 'do_pdb_1' : False,
@@ -121,8 +133,13 @@ def comparison_tool(ensemble_1_path, ensemble_1_name, ensemble_2_path, ensemble_
                 print("Converting files to .xtc + topology .pdb...\n ")
                 if not os.path.exists("/".join([var_dict["_".join(['ensemble',which_ens,'path'])],'converted_files'])):
                     os.mkdir("/".join([var_dict["_".join(['ensemble',which_ens,'path'])],'converted_files']))
+
                 for file_j in var_dict["_".join(['pdb_files',which_ens])]:
-                    multiframe_pdb_to_xtc(pdb_file = "/".join([var_dict["_".join(['ensemble',which_ens,'path'])],file_j]), save_path = "/".join([var_dict["_".join(['ensemble',which_ens,'path'])],'converted_files']), prot_name = file_j.split('.pdb')[0])
+                    if not os.path.exists("/".join([var_dict["_".join(['ensemble',which_ens,'path'])],'converted_files',file_j.split('.pdb')[0]+'.xtc'])):
+                        print('Converted file does not exist, converting')
+                        multiframe_pdb_to_xtc(pdb_file = "/".join([var_dict["_".join(['ensemble',which_ens,'path'])],file_j]), save_path = "/".join([var_dict["_".join(['ensemble',which_ens,'path'])],'converted_files']), prot_name = file_j.split('.pdb')[0])
+                    else:
+                        print('Converted file exists, skipping')
                     print("".join(['Done for ',file_j]))
                 var_dict["_".join(['do_xtc',which_ens])] = True
                 var_dict["_".join(['xtc_root_path',which_ens])] = "/".join([var_dict["_".join(['ensemble',which_ens,'path'])],'converted_files'])
@@ -225,7 +242,7 @@ def comparison_tool(ensemble_1_path, ensemble_1_name, ensemble_2_path, ensemble_
                 
                 define_frames(xtc_file = "/".join([var_dict["_".join(['xtc_root_path',which_ens])],var_dict["_".join(['xtc_files',which_ens])][j]]), top_file = "/".join([var_dict["_".join(['xtc_root_path',which_ens])],var_dict["_".join(['pdb_files',which_ens])][0]]),
                           pdb_folder = None, num_cores = n_cores, prot_name = pname, save_to =  "/".join([var_dict["_".join(['ensemble',which_ens,'path'])],'coordinates']),
-                             name_variable = 'ipynb.fs.full.build_frames')
+                             name_variable = 'build_frames')
             
         if var_dict["_".join(['do_pdb',which_ens])] == True:
             
@@ -240,7 +257,7 @@ def comparison_tool(ensemble_1_path, ensemble_1_name, ensemble_2_path, ensemble_
                 define_frames(xtc_file = None, top_file = None,
                           pdb_folder = "/".join([var_dict["_".join(['ensemble',which_ens,'path'])],var_dict["_".join(['folders',which_ens])][j]]), num_cores = n_cores,
                               prot_name = pname, save_to =  "/".join([var_dict["_".join(['ensemble',which_ens,'path'])],'coordinates']),
-                              name_variable = 'ipynb.fs.full.build_frames')
+                              name_variable = 'build_frames')
                 
         # Sample independent replicas if needed
         
@@ -290,7 +307,6 @@ def comparison_tool(ensemble_1_path, ensemble_1_name, ensemble_2_path, ensemble_
                 
             for j in range(1,NR):
                 
-                #wmat = w_matrix(prot_1 = var_dict["_".join(['list_global_replicas',which_ens])][0].split('_coordinates.hdf5')[0], prot_2 = var_dict["_".join(['list_global_replicas',which_ens])][j].split('_coordinates.hdf5')[0] , N_centers = 2000, N_cores = n_cores, data_path = coor_path, name_variable = 'ipynb.fs.full.wmatrix')
                 wmat = w_matrix(prot_1 = var_dict["_".join(['list_global_replicas',which_ens])][0].split('_coordinates.hdf5')[0], prot_2 = var_dict["_".join(['list_global_replicas',which_ens])][j].split('_coordinates.hdf5')[0] , N_centers = 2000, N_cores = n_cores, data_path = coor_path, name_variable = 'wmatrix')
                 os.chdir("/".join([results_path,'intra_ensemble_wmatrices']))
                 np.save("_".join([var_dict["_".join(['ensemble',which_ens,'name'])],'0',str(j),'wmatrix.npy']), wmat)
@@ -374,9 +390,18 @@ def comparison_tool(ensemble_1_path, ensemble_1_name, ensemble_2_path, ensemble_
 
 
 
-
-
 comparison_tool(ensemble_1_path = path_ensemble_1,
-        ensemble_1_name = name_1, ensemble_2_path = path_ensemble_2, ensemble_2_name = name_2, 
-        results_path = None,interactive = False, N_replicas_1 = Nrep_1, N_replicas_2 = Nrep_2,
-        N_cores = ncores)
+                ensemble_1_name = name_1, 
+                ensemble_2_path = path_ensemble_2,
+                ensemble_2_name = name_2, 
+                results_path = results,
+                interactive = False,
+                N_replicas_1 = Nrep_1,
+                N_replicas_2 = Nrep_2,
+                N_cores = ncores)
+
+
+
+
+
+

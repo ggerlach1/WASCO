@@ -19,25 +19,25 @@ import warnings # Optional
 import argparse 
 
 parser = argparse.ArgumentParser(description='Run this method')
-parser.add_argument('--path', help='path to SCRATCH')
 parser.add_argument('--n1', help='Name ensamble 1')
 parser.add_argument('--n2', help='Name ensamble 2')
+parser.add_argument('--results', help='Name results directory')
 args=parser.parse_args()
 
-
-path_ensemble_1 = args.path+'/ensemble_1'
-path_ensemble_2 = args.path+'/ensemble_2'
 name_1 = args.n1
 name_2 = args.n2
-results = args.path+'/results_script'
+results = args.results
 
 Nrep_1 = 1 # If 1, no replicas will be sampled. If multiple replicas are provided by the user, forced to 1.
 Nrep_2 = 1
 ncores = 4 # Number of threads (cores). If 'max', set to the maximum number of available threads.
 
 
-def comparison_tool(ensemble_1_path, ensemble_1_name, ensemble_2_path, ensemble_2_name, results_path = None, interactive = True, N_replicas_1 = 1, N_replicas_2 = 1, N_cores = 1):
-     
+def comparison_tool(ensemble_1_name, ensemble_2_name, results_path = None, interactive = True, N_replicas_1 = 1, N_replicas_2 = 1, N_cores = 1):
+
+    path_to_running = os.path.dirname(__file__)
+    ensemble_1_path = os.path.join(os.path.dirname(__file__),'ensemble_1')
+    ensemble_2_path = os.path.join(os.path.dirname(__file__),'ensemble_2')
     if results_path == ensemble_1_path or results_path == ensemble_2_path:
         sys.exit("Please choose results_path different from ensemble_1_path and ensemble_2_path.")
     if ensemble_1_path == ensemble_2_path:
@@ -50,9 +50,9 @@ def comparison_tool(ensemble_1_path, ensemble_1_name, ensemble_2_path, ensemble_
             results_path = "/".join([os.path.abspath(os.path.join(ensemble_1_path, os.pardir)),"_".join(['results',ensemble_1_name,ensemble_2_name])])
         else:
             sys.exit("".join(['The folder ', "/".join([os.path.abspath(os.path.join(ensemble_1_path, os.pardir)),"_".join(['results',ensemble_1_name,ensemble_2_name])]),' already exists and it is not empty. Please empty or delete it.']))
-    if results_path is not None and not os.path.exists(results_path):
-        os.mkdir(results_path)
-    if results_path is not None and os.path.exists(results_path):
+    if results_path is not None and not os.path.exists(os.path.join(os.path.dirname(__file__),results_path)):
+        os.mkdir(os.path.join(os.path.dirname(__file__),results_path))
+    if results_path is not None and os.path.exists(os.path.join(os.path.dirname(__file__),results_path)):
         if len(os. listdir(results_path))==0:
             None
         else:
